@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Enter the total price paid, size of one pack, and pack count to compare the same-currency price per 100 g, 100 mL, or item. Calculations stay in the current browser page; no currency conversion.">
+  <title>Unit Price Comparison | Compare Pack Sizes and Prices | GlossQuote</title>
+  <link rel="stylesheet" href="../styles/app.css">
+  <script type="module" src="../js/app.mjs"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to comparison tool</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <span class="brand">GlossQuote · Unit Price Comparison</span>
+      <nav class="languages" aria-label="Language">
+        <a lang="zh-Hant" hreflang="zh-Hant" href="../index.html">繁體中文</a>
+        <span lang="en" aria-current="page">English</span>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <h1>Compare the actual unit price of each item</h1>
+    <p class="intro">Enter what you paid for each pack set and the size of one pack to compare different formats. Use one currency throughout. The tool does not look up products, convert currencies, or infer discounts you did not enter.</p>
+    <noscript><p>This tool requires JavaScript. No data was submitted.</p></noscript>
+    <div id="app" hidden>
+      <form id="comparison-form" class="worksheet" autocomplete="off" novalidate>
+        <div class="worksheet-heading">
+          <div><h2>Product details</h2><span id="example-marker" class="marker" hidden>Example</span></div>
+          <span id="row-count" class="row-count"></span>
+        </div>
+        <div class="toolbar">
+          <div class="category-field">
+            <label for="category">Comparison category</label>
+            <select id="category">
+              <option value="weight">Weight · per 100 g</option>
+              <option value="volume">Volume · per 100 mL</option>
+              <option value="count">Item count · per piece</option>
+            </select>
+          </div>
+          <button type="button" id="example">Load example</button>
+        </div>
+        <p class="same-currency">Use one currency for this comparison. This tool does not convert currencies. Enter the total price paid for the pack set and the size of one pack.</p>
+        <div class="input-help">
+          <p id="price-help"><strong>Price:</strong> 0–9,999,999.99, up to two decimal places; no thousands separators.</p>
+          <p><strong>Size:</strong> <span id="capacity-help">Greater than 0, up to 1,000,000; up to three decimal places.</span></p>
+          <p id="pack-help"><strong>Packs:</strong> An integer from 1–1000. For two 500 g packs, enter a pack size of 500 and a count of 2.</p>
+        </div>
+        <div id="rows"></div>
+        <div class="row-footer">
+          <button type="button" id="add" aria-describedby="row-limit">Add product</button>
+          <p id="row-limit" class="row-range">Keep at least 2 products. You can compare up to 12.</p>
+        </div>
+        <div class="actionbar">
+          <button type="button" id="clear">Clear</button>
+          <button type="submit" id="compare" class="primary">Compare unit prices</button>
+        </div>
+      </form>
+      <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></p>
+      <section class="results" aria-labelledby="results-title">
+        <div class="results-heading">
+          <h2 id="results-title">Comparison results</h2>
+          <button type="button" id="copy" disabled>Copy results</button>
+        </div>
+        <div id="result" hidden>
+          <p id="result-summary" class="result-summary"></p>
+          <div class="table-region" role="region" aria-label="Unit price comparison table, horizontally scrollable" tabindex="0">
+            <table>
+              <caption>Sorted from lowest to highest by unrounded unit price. Only exact matches are tied.</caption>
+              <thead><tr>
+                <th scope="col">Rank</th><th scope="col">Product</th><th scope="col">Total price paid</th>
+                <th scope="col">Packs</th><th scope="col">Total quantity</th><th scope="col" id="basis-heading">Unit price</th>
+              </tr></thead>
+              <tbody id="result-rows"></tbody>
+            </table>
+          </div>
+          <p id="collision" class="note" hidden>Values are rounded for display; ordering uses the unrounded unit price.</p>
+          <p id="precision" class="note" hidden>A nonzero unit price shown as &lt;0.0001 is below the display precision.</p>
+        </div>
+        <div id="fallback" class="fallback" hidden>
+          <label for="copy-text">Plain text results for manual copying</label>
+          <textarea id="copy-text" readonly aria-describedby="manual-help" spellcheck="false"></textarea>
+          <button type="button" id="select-copy">Select all text</button>
+          <p id="manual-help" class="note">After selecting, use Ctrl+C or your device’s Copy action.</p>
+        </div>
+      </section>
+    </div>
+    <section class="help" aria-labelledby="help-title">
+      <h2 id="help-title">How to enter product details</h2>
+      <p>Compare weight per 100 g, volume per 100 mL, or item count per piece. Results are meaningful only when all prices use the same currency.</p>
+      <details><summary>How do I compare products with different pack counts?</summary><p>Enter the size of one pack and the number of packs. The tool calculates the total quantity before comparing the total price.</p></details>
+      <details><summary>Should I enter the sale price?</summary><p>Enter the amount you actually paid for the full pack set. The tool does not infer discounts, tax, or shipping.</p></details>
+      <details><summary>Can I compare different currencies?</summary><p>No. Use one currency for a comparison; this tool does not convert exchange rates.</p></details>
+      <details><summary>Can I compare weight and volume together?</summary><p>No. Choose one category. The tool does not assume a product’s density.</p></details>
+      <details><summary>Are my product names and prices uploaded?</summary><p>No. Calculations stay in the current page’s memory. The result is passed to the browser clipboard only when you select Copy. Leaving or refreshing the page clears your entries.</p></details>
+    </section>
+  </main>
+  <footer><a class="home-link" href="https://glossquote.com/en/index.html">Back to Gloss Tools</a><p>Gloss Tools by GlossQuote · Unit Price Comparison</p></footer>
+</body>
+</html>

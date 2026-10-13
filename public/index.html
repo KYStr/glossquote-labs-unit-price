@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="輸入商品整組實付價格、每包容量與包數，換算並排序同一幣別下每 100 公克、每 100 毫升或每件的單價。資料在目前瀏覽器頁面計算，不換匯。">
+  <title>購物單價比較器｜比較不同容量與包數的實付單價｜GlossQuote</title>
+  <link rel="stylesheet" href="styles/app.css">
+  <script type="module" src="js/app.mjs"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至比較工具</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <span class="brand">GlossQuote · 購物單價比較</span>
+      <nav class="languages" aria-label="語言">
+        <span lang="zh-Hant" aria-current="page">繁體中文</span>
+        <a lang="en" hreflang="en" href="en/index.html">English</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <h1>比較商品的實際單位價格</h1>
+    <p class="intro">輸入每組實際付款金額和包裝規格，就能比較不同大小與包數。所有價格請用同一幣別；這個工具不會查商品、換匯或計算未輸入的折扣。</p>
+    <noscript><p>此工具需要啟用 JavaScript；沒有資料送出。</p></noscript>
+    <div id="app" hidden>
+      <form id="comparison-form" class="worksheet" autocomplete="off" novalidate>
+        <div class="worksheet-heading">
+          <div><h2>商品資料</h2><span id="example-marker" class="marker" hidden>範例</span></div>
+          <span id="row-count" class="row-count"></span>
+        </div>
+        <div class="toolbar">
+          <div class="category-field">
+            <label for="category">比較類別</label>
+            <select id="category">
+              <option value="weight">重量 · 每 100 g</option>
+              <option value="volume">容量 · 每 100 mL</option>
+              <option value="count">件數 · 每件</option>
+            </select>
+          </div>
+          <button type="button" id="example">載入範例</button>
+        </div>
+        <p class="same-currency">同一次比較請使用相同幣別；此工具不換匯。價格填整組實付金額，容量填單包標示。</p>
+        <div class="input-help">
+          <p id="price-help"><strong>價格：</strong>0–9,999,999.99，最多兩位小數；不使用千分位。</p>
+          <p><strong>容量：</strong><span id="capacity-help">大於 0，最多 1,000,000；最多三位小數。</span></p>
+          <p id="pack-help"><strong>包數：</strong>1–1000 的整數；例如兩包各 500 g，容量填 500，包數填 2。</p>
+        </div>
+        <div id="rows"></div>
+        <div class="row-footer">
+          <button type="button" id="add" aria-describedby="row-limit">新增商品</button>
+          <p id="row-limit" class="row-range">至少保留 2 個商品，最多 12 個。</p>
+        </div>
+        <div class="actionbar">
+          <button type="button" id="clear">清除</button>
+          <button type="submit" id="compare" class="primary">比較單價</button>
+        </div>
+      </form>
+      <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></p>
+      <section class="results" aria-labelledby="results-title">
+        <div class="results-heading">
+          <h2 id="results-title">比較結果</h2>
+          <button type="button" id="copy" disabled>複製結果</button>
+        </div>
+        <div id="result" hidden>
+          <p id="result-summary" class="result-summary"></p>
+          <div class="table-region" role="region" aria-label="單價比較表，可水平捲動" tabindex="0">
+            <table>
+              <caption>按未四捨五入單價，由低至高排序；精確同價才並列。</caption>
+              <thead><tr>
+                <th scope="col">排名</th><th scope="col">商品</th><th scope="col">整組實付價格</th>
+                <th scope="col">包數</th><th scope="col">整組總量</th><th scope="col" id="basis-heading">單價</th>
+              </tr></thead>
+              <tbody id="result-rows"></tbody>
+            </table>
+          </div>
+          <p id="collision" class="note" hidden>顯示值已四捨五入；排序依未四捨五入單價。</p>
+          <p id="precision" class="note" hidden>非零單價顯示為 &lt;0.0001 時，代表已低於顯示精度。</p>
+        </div>
+        <div id="fallback" class="fallback" hidden>
+          <label for="copy-text">可手動複製的結果純文字</label>
+          <textarea id="copy-text" readonly aria-describedby="manual-help" spellcheck="false"></textarea>
+          <button type="button" id="select-copy">選取全部文字</button>
+          <p id="manual-help" class="note">選取後，使用 Ctrl+C 或裝置的「複製」操作。</p>
+        </div>
+      </section>
+    </div>
+    <section class="help" aria-labelledby="help-title">
+      <h2 id="help-title">如何填寫比較資料</h2>
+      <p>重量以每 100 公克、容量以每 100 毫升、件數以每件比較。若輸入的不是相同幣別，結果沒有意義。</p>
+      <details><summary>如何比較不同包數的商品？</summary><p>輸入每包容量和包數；工具先算出整組總量，再以整組實付價除以總量比較。</p></details>
+      <details><summary>促銷後價格要怎麼填？</summary><p>輸入你實際為整組支付的金額。工具不推測折扣、稅金或運費。</p></details>
+      <details><summary>可以比較不同幣別嗎？</summary><p>不可以；同一批比較須使用同一幣別，工具不做匯率換算。</p></details>
+      <details><summary>重量和容量可以一起比嗎？</summary><p>不可以；先選一種類別。工具不假設液體密度。</p></details>
+      <details><summary>我的商品名稱和價格會上傳嗎？</summary><p>不會；計算在目前頁面記憶體內。只有按複製時，結果純文字會交給瀏覽器剪貼簿。離開或重新整理頁面會清除輸入。</p></details>
+    </section>
+  </main>
+  <footer><a class="home-link" href="https://glossquote.com/index.html">返回 Gloss Tools 首頁</a><p>Gloss Tools by GlossQuote · 購物單價比較</p></footer>
+</body>
+</html>
